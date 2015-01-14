@@ -30,6 +30,38 @@ extern const char* NGetFileName(const char* fullname);
 
 #define NLFILE NGetFileName(__FILE__)
 
+/*
+ * supported formats:
+ *    %[0][width][x][X]O        off_t
+ *    %[0][width]T              time_t
+ *    %[0][width][u][x|X]z      ssize_t/size_t
+ *    %[0][width][u][x|X]d      int/u_int
+ *    %[0][width][u][x|X]l      long
+ *    %[0][width|m][u][x|X]i    ngx_int_t/ngx_uint_t
+ *    %[0][width][u][x|X]D      int32_t/uint32_t
+ *    %[0][width][u][x|X]L      int64_t/uint64_t
+ *    %[0][width|m][u][x|X]A    ngx_atomic_int_t/ngx_atomic_uint_t
+ *    %[0][width][.width]f      double, max valid number fits to %18.15f
+ *    %P                        ngx_pid_t
+ *    %M                        ngx_msec_t
+ *    %r                        rlim_t
+ *    %p                        void *
+ *    %V                        ngx_str_t *
+ *    %v                        ngx_variable_value_t *
+ *    %s                        null-terminated string
+ *    %*s                       length and string
+ *    %Z                        '\0'
+ *    %N                        '\n'
+ *    %c                        char
+ *    %%                        %
+ *
+ *  reserved:
+ *    %t                        ptrdiff_t
+ *    %S                        null-terminated wchar string
+ *    %C                        wchar
+ */
+
+
 #define NLOG_DEBUG(format, args...) \
 		if(g_NlogLevel>=NL_DEBUG)NPrint(NWriteDebugLog,"DEBUG", __FUNCTION__, NLFILE, __LINE__, format, ##args)
 #define NLOG_DEBUG2(format, args...) \
@@ -44,6 +76,26 @@ extern const char* NGetFileName(const char* fullname);
 		if(g_NlogLevel>=NL_ERROR)NPrint(NWriteLog,"ERROR", __FUNCTION__, NLFILE, __LINE__, format, ##args)
 
 #define NLOG(format, args...) NPrint(NWriteLog,"LOG", __FUNCTION__, NLFILE, __LINE__, format, ##args)
+
+//#define TEST_LOG 1
+#ifdef TEST_LOG
+#define NLOG_TEST(format, args...) \
+		NPrint(NWriteLog,"TEST", __FUNCTION__, NLFILE, __LINE__, format, ##args)
+#else
+#define NLOG_TEST(format, args...) 
+#endif
+
+#define CONF_ERROR(format, args...);{\
+	u_char buf[1024*4];\
+	ngx_memset(buf,0,sizeof(buf));\
+	ngx_sprintf(buf,"ERROR: %s:%d"format"\n",__FILE__,__LINE__,##args);\
+	printf((const char*)buf);}
+
+#define CONF_INFO(format, args...); {\
+	u_char buf[1024*4];\
+	ngx_memset(buf,0,sizeof(buf));\
+	ngx_sprintf(buf,"INFO : %s:%d"format"\n",__FILE__,__LINE__,##args);\
+	printf((const char*)buf);}
 
 extern ngx_open_file_t* g_biz_logger;
 extern ngx_open_file_t* g_biz_debuger;

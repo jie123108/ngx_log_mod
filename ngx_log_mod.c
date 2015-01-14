@@ -98,6 +98,20 @@ static void* ngx_http_bizlog_create_srv_conf(ngx_conf_t *cf);
 
 static char* ngx_http_bizlog_merge_srv_conf(ngx_conf_t *cf,void *parent, void *child);
 
+static ngx_conf_enum_t ngx_http_bizlog_loglevels[] = {
+		{ngx_string("0"), 0},
+		{ngx_string("1"), 1},
+		{ngx_string("2"), 2},
+		{ngx_string("3"), 3},
+		{ngx_string("4"), 4},
+		{ngx_string("5"), 5},
+		{ngx_string("error"), 0},
+		{ngx_string("warn"), 1},
+		{ngx_string("info"), 2},
+		{ngx_string("debug"), 3},
+		{ngx_string("debug2"), 4},
+		{ngx_string("all"), 5}
+};
 
 static ngx_command_t  ngx_http_bizlog_commands[] = {
     
@@ -109,10 +123,10 @@ static ngx_command_t  ngx_http_bizlog_commands[] = {
       NULL },
     { ngx_string("log_level"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
-      ngx_conf_set_num_slot,
+      ngx_conf_set_enum_slot, 
       NGX_HTTP_SRV_CONF_OFFSET,
       offsetof(bizlog_svr_conf_t, log_level),
-      NULL },
+      ngx_http_bizlog_loglevels},
     { ngx_string("logfile"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
       ngx_conf_set_str_slot,

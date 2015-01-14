@@ -9,6 +9,7 @@ bizlog [on|off];
 		on 打开日志输出，off关闭日志输出，默认为off.
 
 log_level [0|1|2|3|4|5]
+log_level [error|warn|info|debug|debug2|all]
 ======
 		0: error 输出错误级别的日志，使用NLOG_ERRROR 输出。
 		1: warn  输出警告级别(包含错误日志)的日志，使用NLOG_WARN输出。
